@@ -1,34 +1,18 @@
 FROM docker.ermao.net/mlikiowa/napcat-docker:latest
 
-# 基础登录配置
+# 必需的环境变量
 ENV NAPCAT_QQ=2647742870
-ENV NAPCAT_LOGIN_METHOD=qrcode
-ENV NAPCAT_QRCODE_TIMEOUT=180
-ENV NAPCAT_AUTO_LOGIN=true
 
-# WSS反向WS客户端配置
-ENV NAPCAT_REVERSE_WS_CLIENT_ENABLE=true
-ENV NAPCAT_REVERSE_WS_CLIENT_URL=wss://ermaozi.cn/onebot/v11/ws
-ENV NAPCAT_ONE_BOT_COMPATIBLE=true
-ENV NAPCAT_ONE_BOT_VERSION=11
-ENV NAPCAT_WS_RECONNECT=true
-ENV NAPCAT_WS_RECONNECT_INTERVAL=5
-ENV NAPCAT_WS_TIMEOUT=30
-ENV NAPCAT_WS_VERIFY_SSL=true
-
-# SSL/TLS配置（重要！）
-ENV NODE_TLS_REJECT_UNAUTHORIZED=0
-
-# 调试配置
-ENV NAPCAT_LOG_LEVEL=debug
-ENV NAPCAT_DEBUG_WS=true
-
-# 性能优化
-ENV NAPCAT_DISABLE_DOCKER_OPS=true
-ENV ELECTRON_DISABLE_GPU=true
-ENV NODE_ENV=production
-
-WORKDIR /app
+# 为云环境创建配置目录
 RUN mkdir -p /app/napcat/config /app/.config/QQ
-RUN chown -R 1000:1000 /app
-USER 1000:1000
+
+# 设置工作目录
+WORKDIR /app
+
+# 暴露应用端口（请确认实际端口）
+EXPOSE 8080
+
+# 添加健康检查（可选但推荐）
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost:8080/ || exit 1
+
